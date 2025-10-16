@@ -17,10 +17,6 @@ bot.setMyCommands(
       description: 'Increase Count',
     },
     {
-      command: '/decrease',
-      description: 'Decrease Count',
-    },
-    {
       command: '/display',
       description: 'Display Count',
     }
@@ -37,19 +33,24 @@ bot.on('message', async (msg: Message) => {
       return;
     }
 
-    const { from, command, prompt } = preparePrompt(msg);
+    const { from, command } = preparePrompt(msg);
     if (!command) return;
-    console.log('\nCOMMAND:', command, '\nPROMPT:', prompt);
+    // console.log('\nCOMMAND:', command, '\nPROMPT:', prompt);
   
     switch (command) {
       case 'increase':
-        userCountHandler.increase(from);
-        break;
-      case 'decrease':
-        userCountHandler.decrease(from);
+        const time = new Date().toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
+        try {
+          await userCountHandler.increase(from);
+          await bot.sendMessage(msg.chat.id, `🏋️ You checked in at ${time}. Keep it up, ${from}!`);
+        } catch (err) {
+          console.error(err);
+          await bot.sendMessage(msg.chat.id, "⚠️ Could not record your check-in. Please try again later.");
+        }
         break;
       case 'display':
-        await bot.sendMessage(msg.chat.id, userCountHandler.displayUserCounts());
+        const msgToDisplay = await userCountHandler.displayUserCounts();
+        await bot.sendMessage(msg.chat.id, msgToDisplay || "No check-ins yet.");
         break;
       case 'default':
         break;

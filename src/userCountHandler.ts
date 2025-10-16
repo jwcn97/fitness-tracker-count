@@ -1,36 +1,29 @@
-import { retrieve, writeToFile } from "./utils/fsHandle";
+import mongoose from 'mongoose';
+import Checkin from "./models/checkIn";
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 export class UserCountHandler {
     counts: Record<string, number> = {};
 
-    constructor() {
-        this.counts = retrieve();
-    }
+    constructor() {}
 
-    displayUserCounts() {
-        if (!this.counts || !Object.keys(this.counts).length) {
-            return '';
+    async displayUserCounts() {
+        const checkins = await Checkin.find().sort({ timestamp: -1 }).limit(5);
+        if (checkins.length === 0) {
+          return '';
         }
-        return Object.entries(this.counts).map(([username, count]) => `${username}: 🏋️ x${count}`).join('\n');
+      
+        const list = checkins
+          .map((c: any) => `${c.username} - ${(c.timestamp as Date).toLocaleString("en-SG")}`)
+          .join("\n");
+        return list;
     }
 
-    increase(username: string) {
-        if (!this.counts || !(username in this.counts)) {
-            this.counts[username] = 1;
-        }
-        this.counts[username]++;
-        this.save();
-    }
-
-    decrease(username: string) {
-        if (!this.counts || !(username in this.counts)) {
-            return;
-        }
-        this.counts[username]--;
-        this.save();
-    }
-
-    save() {
-        writeToFile({...this.counts})
+    async increase(username: string) {
+        const newCheckin = new Checkin({ username });
+        await newCheckin.save();
     }
 }
