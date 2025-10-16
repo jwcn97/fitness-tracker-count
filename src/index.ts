@@ -33,6 +33,10 @@ bot.setMyCommands(
 );
 
 bot.on('message', async (msg: Message) => {
+    if (msg.chat.type == 'private') {
+      return;
+    }
+
     const { from, command, prompt } = preparePrompt(msg);
     if (!command) return;
     console.log('\nCOMMAND:', command, '\nPROMPT:', prompt);
