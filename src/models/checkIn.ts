@@ -5,4 +5,4 @@ const checkinSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Checkin", checkinSchema);
+export default mongoose.model(process.env.MONGO_NAME, checkinSchema);

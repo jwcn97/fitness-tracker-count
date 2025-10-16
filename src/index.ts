@@ -20,12 +20,7 @@ bot.setMyCommands(
       command: '/display',
       description: 'Display Count',
     }
-  ],
-  {
-    scope: {
-      type: 'all_private_chats',
-    },
-  }
+  ]
 );
 
 bot.on('message', async (msg: Message) => {
