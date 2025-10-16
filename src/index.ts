@@ -29,17 +29,13 @@ bot.setMyCommands(
 );
 
 bot.on('message', async (msg: Message) => {
+    if (msg.chat.type == 'private') {
+      return;
+    }
+
     // TODO: do more testing on prompt
     const { from, command } = preparePrompt(msg);
     if (!command) return;
-
-    if (msg.chat.type == 'private') {
-      if (msg.from.username === 'zecoffeeaddict' && command == 'clear') {
-        await userCountHandler.clear();
-        await bot.sendMessage(msg.chat.id, "✅ All check-in records removed!");
-      }
-      return;
-    }
   
     switch (command) {
       case 'increase':
