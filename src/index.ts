@@ -36,6 +36,8 @@ bot.on('message', async (msg: Message) => {
     // TODO: do more testing on prompt
     const { from, command } = preparePrompt(msg);
     if (!command) return;
+
+    console.log('TEST', command);
   
     switch (command) {
       case 'increase':
