@@ -29,20 +29,25 @@ bot.setMyCommands(
 );
 
 bot.on('message', async (msg: Message) => {
-    if (msg.chat.type == 'private') {
-      return;
-    }
-
+    // TODO: do more testing on prompt
     const { from, command } = preparePrompt(msg);
     if (!command) return;
-    // console.log('\nCOMMAND:', command, '\nPROMPT:', prompt);
+
+    if (msg.chat.type == 'private') {
+      if (msg.from.username === 'zecoffeeaddict' && command == 'clear') {
+        await userCountHandler.clear();
+        await bot.sendMessage(msg.chat.id, "✅ All check-in records removed!");
+      }
+      return;
+    }
   
     switch (command) {
       case 'increase':
         const time = new Date().toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
         try {
           await userCountHandler.increase(from);
-          await bot.sendMessage(msg.chat.id, `🏋️ You checked in at ${time}. Keep it up, ${from}!`);
+          const msgToDisplay = await userCountHandler.displayUserCounts();
+          await bot.sendMessage(msg.chat.id, `🏋️ You checked in at ${time}. Keep it up, ${from}!\n\n${msgToDisplay}`);
         } catch (err) {
           console.error(err);
           await bot.sendMessage(msg.chat.id, "⚠️ Could not record your check-in. Please try again later.");
