@@ -1,6 +1,6 @@
 import type { Message } from 'node-telegram-bot-api';
 
-const BOT_USERNAME = '@fitness_tracker_count_test_bot';
+const BOT_USERNAME = `@${process.env.BOT_NAME}`;
 
 export function preparePrompt({ text, from, entities = [] }: Message): {
   from?: string;
